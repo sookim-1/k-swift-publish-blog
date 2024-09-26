@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta property="og:site_name" content="sookim-1"/><link rel="canonical" href="https://sookim-1.github.io/posts/033-20240919"/><meta name="twitter:url" content="https://sookim-1.github.io/posts/033-20240919"/><meta property="og:url" content="https://sookim-1.github.io/posts/033-20240919"/><title>번호 : 033, 작성일자: 2024-09-19 | sookim-1</title><meta name="twitter:title" content="번호 : 033, 작성일자: 2024-09-19 | sookim-1"/><meta property="og:title" content="번호 : 033, 작성일자: 2024-09-19 | sookim-1"/><meta name="description" content="AVCaptureVideo 텍스트인식, 접근권한 사용시 주의사항, Xcode 버전별 차이점 정리, Xcode 단축키 정리, Youtube Playlist 스크립트 작성, SnapKit 애니메이션 처리, 정규표현식 Tip, SwiftUI - Kavsoft, 프로그래머스 코딩테스트"/><meta name="twitter:description" content="AVCaptureVideo 텍스트인식, 접근권한 사용시 주의사항, Xcode 버전별 차이점 정리, Xcode 단축키 정리, Youtube Playlist 스크립트 작성, SnapKit 애니메이션 처리, 정규표현식 Tip, SwiftUI - Kavsoft, 프로그래머스 코딩테스트"/><meta property="og:description" content="AVCaptureVideo 텍스트인식, 접근권한 사용시 주의사항, Xcode 버전별 차이점 정리, Xcode 단축키 정리, Youtube Playlist 스크립트 작성, SnapKit 애니메이션 처리, 정규표현식 Tip, SwiftUI - Kavsoft, 프로그래머스 코딩테스트"/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.svg" type="image/svg+xml"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to sookim-1"/></head><body class="item-page"><header><div class="wrapper"><a href="/" class="site-name">sookim-1</a></div></header><div class="wrapper"><article><div class="content"><h1>번호 : 033, 작성일자: 2024-09-19</h1><h2>2024.09.09 ~ 2024.09.18</h2><h3>📷 Text OCR</h3><hr><p>지난 주 YesWeScan라이브러리에서만 인식률이 좋았던 이유에 대해서 분석해본 결과 전달받은 AVCapturePhoto를 UIImage로 타입캐스팅한 결과 인식률이 좋지 않았고 CMSampleBufffer를 CIImage로 타입캐스팅하여 사용해야 인식률이 좋았다.</p><p>추가로 직접 캡처동작을 트리거하지 않고 매 프레임을 입력받아 자동으로 텍스트가 인식되면 처리하기 위해 고민해본 결과 AVCapturePhoto를 사용하지 않고 AVCaptureVideo를 사용하면 매 프레임을 입력받고 입력받은 CMSampleBuffer를 CIImage로 타입캐스팅 후 Vision을 통해 텍스트를 인식하게 되면 자동으로 텍스트가 인식된 경우를 처리할 수 있었다.</p><h3>🌎 Youtube Data API 활용 - 재생목록 내의 동영상목록 가져오기</h3><hr><p>지난 주 Youtube 특정채널 동영상목록을 가져오는 파이썬 스크립트를 작성했다.</p><p>특정채널 동영상목록이 매우 많은 경우 무료 API 제한량이 있어서 딜레이를 지정해도 모든 동영상을 가져오지 못하는 경우도 있고, 재생목록내의 동영상이 따로 있는 경우도 있어서 재생목록 내의 동영상목록을 가져오는 파이썬 스크립트를 추가작성했다.</p><p>🔗 <a href="https://developers.google.com/youtube/v3/docs/playlistItems/list?hl=ko">Youtube API Docs - playlistitem</a></p><pre><code class="language-python">import requests
+import time
+
+# Step 1: API 설정
+API_KEY = ''  # 실제 API 키 작성
+PLAYLIST_ID = '' # 재생목록 ID
+CHANNEL_ID = ''  # 제목을 가져올 채널 ID
+
+MAX_RESULTS = 50  # 한 번에 가져올 결과 수 (최대 50)
+
+# 유튜브 데이터 API v3 playlistItems 엔드포인트 기본 URL
+youtube_url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+
+# API 요청에 필요한 매개변수
+params = {
+    'part': 'snippet',
+    'maxResults': MAX_RESULTS,
+    'playlistId': PLAYLIST_ID,
+    'key': API_KEY
+}
+
+# 재생목록에서 비디오 제목과 URL을 가져오는 함수
+def fetch_playlist_video_titles_and_urls():
+    videosResult = []
+    next_page_token = None
+    index = 1  # 동영상 인덱스 시작값
+
+    while True:
+        if next_page_token:
+            params['pageToken'] = next_page_token
+
+        # Step 2: 유튜브 데이터 API에 GET 요청 보내기
+        response = requests.get(youtube_url, params=params)
+        data = response.json()
+
+        # Step 3: 비디오 제목 및 URL 추출
+        for item in data['items']:
+            title = item['snippet']['title']
+            video_id = item['snippet']['resourceId']['videoId']
+            video_url = f'https://www.youtube.com/watch?v={video_id}&amp;list={PLAYLIST_ID}&amp;index={index}'
+            videosResult.append((title, video_url))
+            index += 1
+
+        # 다음 페이지가 있는지 확인
+        next_page_token = data.get('nextPageToken')
+
+        # 다음 페이지가 있을 경우, 61초 대기
+        if not next_page_token:
+            break
+
+    return videosResult
+
+# 제목과 URL을 텍스트 파일에 저장하는 함수
+def save_titles_and_urls_to_file(videos, filename='playlist_video_titles_and_urls.txt'):
+    with open(filename, 'w', encoding='utf-8') as file:
+        for index, (title, url) in enumerate(videos, start=1):
+            file.write(f"{index}. **[{title}]({url})**\n\n")
+
+# 코드 실행
+videos = fetch_playlist_video_titles_and_urls()
+save_titles_and_urls_to_file(videos)
+</code></pre><ul><li>원하는 채널ID를 검색한 후 다음페이지가 있다면 페이지를 검색하여 동영상목록을 가져온 후 playlist<em>video</em>titles<em>and</em>urls.txt파일에 저장하는 스크립트</li></ul><h3>👨‍🎓 AutorizationStatus 정리</h3><hr><p>iOS에서는 몇몇 시스템을 사용하기 위해서는 접근권한등이 필요합니다. 예를 들어, 위치권한이 필요한 경우 위치정보에 접근할 수 있는 권한이 필요합니다.</p><p>접근권한의 상태등을 알 수 있는 방법은 AuthorizationStatus라는 enum객체를 사용할 수 있습니다.</p><p>위치접근권한은 CLAuthorizationStatus로 case가 약간 다르지만 대부분의 case들의 종류는 3가지 (<code>Authorized</code> , <code>Denied</code> , <code>NotDetermined</code> )를 자주 사용합니다.</p><ul><li><code>Authorized</code> : 권한이 허용된 상태</li><li><code>Denied</code> : 권한이 거부된 상태</li><li><code>NotDetermined</code> : 권한허용여부를 물어보지 않은 상태</li></ul><p>그럼 notDetermined는 권한허용여부를 물어보지 않은 상태인데 앱이 처음 시작할 때 무조건 권한허용여부를 물어본 상태에도 가끔씩 notDetermined로 설정된 경우가 있을 수 있는 부분이 있어서 의아해서 검색해보았지만 오류가 발생할 수 있다는 내용만 찾았다.</p><p>권한요청을 하는 클로저내에서 UI관련 작업들은 메인스레드를 주의해서 사용할 필요가 있다.</p><h3>🙋🏻‍♂️ 기타 사항</h3><hr><ol><li>Xcode 16이 발표되면서 이전 버전들의 차이점이 궁금해서 간단히 찾아보았는데 iOS보다 Xcode가 먼저 발표되었고 macOS전용이라는 부분등이 신기했다.</li><li>정규식 간단하게 사용하는 방법 <code>[A-Z0-91{2}_[A-Z0-9]{2}_[A-Z0-9]{2}</code> 와 <code>([A-Z0-9]{2}_){2}[A-Z0-9]{2}</code> 는 동일하다.</li><li>SnapKit으로 레이아웃을 구현하는 경우 키보드가 올라올 때 애니메이션 처리하는 방법<ul></ul></li></ol><pre><code class="language-swift">    @objc func keyboardWillShow(note: NSNotification) {
+        if let keyboardSize = (note.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            var keyboardHeight = CGFloat(Int(keyboardSize.height))
+            
+            self.scrollView.snp.updateConstraints {
+                $0.bottom.equalToSuperView().offset(-keyboardHeight)
+            }
+    
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    ```
+    
+4. Xcode 단축키를 정리했다.
+5. Kavsoft라는 SwiftUI를 잘 정리한 사이트가 있어서 해당 채널을 보며 정리했다.
+6. 프로그래머스 코딩테스트 0단계 중 자주 사용하지 않았던 메서드들을 정리 했다.
+</code></pre></div><span>태그: </span><ul class="tag-list"><li><a href="/tags/ios">iOS</a></li><li><a href="/tags/swift">Swift</a></li><li><a href="/tags/접근권한">접근권한</a></li><li><a href="/tags/xcode">Xcode</a></li><li><a href="/tags/swiftui">SwiftUI</a></li><li><a href="/tags/정규표현식">정규표현식</a></li><li><a href="/tags/snapkit">SnapKit</a></li><li><a href="/tags/codingtest">CodingTest</a></li><li><a href="/tags/youtube">Youtube</a></li><li><a href="/tags/vision">Vision</a></li></ul></article></div><footer><p>Generated using <a href="https://github.com/johnsundell/publish">Publish</a></p><p><a href="mailto:scstnghks@gmail.com">Gmail</a> | <a href="https://www.linkedin.com/in/soohwan-kim-80250623a/">LinkedIn</a> | <a href="https://github.com/sookim-1">GitHub</a> | <a href="/feed.rss">RSS</a></p></footer></body></html>

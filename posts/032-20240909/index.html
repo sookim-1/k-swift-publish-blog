@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta property="og:site_name" content="sookim-1"/><link rel="canonical" href="https://sookim-1.github.io/posts/032-20240909"/><meta name="twitter:url" content="https://sookim-1.github.io/posts/032-20240909"/><meta property="og:url" content="https://sookim-1.github.io/posts/032-20240909"/><title>번호 : 032, 작성일자: 2024-09-09 | sookim-1</title><meta name="twitter:title" content="번호 : 032, 작성일자: 2024-09-09 | sookim-1"/><meta property="og:title" content="번호 : 032, 작성일자: 2024-09-09 | sookim-1"/><meta name="description" content="SwiftUI + TCA 느낀점, URLComponent 사용시 주의사항, Youtube API 재생목록 가져오기, Vision프레임워크를 활용하여 Text 추출하기"/><meta name="twitter:description" content="SwiftUI + TCA 느낀점, URLComponent 사용시 주의사항, Youtube API 재생목록 가져오기, Vision프레임워크를 활용하여 Text 추출하기"/><meta property="og:description" content="SwiftUI + TCA 느낀점, URLComponent 사용시 주의사항, Youtube API 재생목록 가져오기, Vision프레임워크를 활용하여 Text 추출하기"/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.svg" type="image/svg+xml"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to sookim-1"/></head><body class="item-page"><header><div class="wrapper"><a href="/" class="site-name">sookim-1</a></div></header><div class="wrapper"><article><div class="content"><h1>번호 : 032, 작성일자: 2024-09-09</h1><h2>2024.09.03 ~ 2024.09.08</h2><h3>🏬 SwiftUI + TCA (The Composable Architecture)</h3><hr><p>기존 UIKit 프로젝트에서 SwiftUI + TCA를 적용한 화면을 적용하기 위해 개발을 했다.</p><p>일단 SwiftUI를 사용하며 느끼는 점은 편리한 부분이 많다는 점이였다.</p><p>UIComponent를 분리 작업, SwiftUI 코드가 UIKit보다 코드 줄이 적어서 가독성이 좋았고, ChatGPT 활용도, Preview 속도등 UI 개발시간이 단축되는 느낌이다.</p><p>TCA는 API 처리 할 때 request, response등 Action이 2개 이상 추가해야해서 조건이 많지 않을 까 생각해봤는데 해당 아키텍처라이브러리에서 단방향을 지키기 위한 부분이라고 생각했다.</p><h3>📷 Text OCR</h3><hr><p>사진에서 Text를 추출하기 위해서 여러가지 Tool이 있다.(Google ML Kit, NHNCloud OCR, Vision)</p><p>그 중 Vision 프레임워크는 Apple에서 제공하는 프레임워크여서 해당 프레임워크를 사용해서 텍스트추출을 시도해봤다.</p><p>이름이 비슷한 VisionKit프레임워크도 있는데, 해당 프레임워크를 같이 사용하면 VNDocumentCameraViewController를 사용하여 영역을 인식해주고 이미지를 추출하면 Vision프레임워크를 이용해 해당 이미지에서 텍스트를 추출할 수 있다.</p><p>하지만, 카메라 스캔화면을 Custom하기 위해서는 직접 VNDocumentCameraViewController를 Custom하는 방법은 아직 없는 것 같다.</p><p>그래서 AVFoundation프레임워크를 활용하여 카메라를 캡처한후 이미지를 Vision프레임워크에 제공했는데 인식률이 현저히 떨어졌다.</p><p>VisionKit이 제공되지 않았을 때 자주 사용하던 🔗 <a href="https://github.com/adorsys/YesWeScan">YesWeScan라이브러리</a>가 있다고 해서 이미지를 제공하여 테스트해보았는데 VisionKit과 인식률이 동일했다.</p><p>해당 라이브러리를 분석하여 내가 첫번째로 사용했던 AVFoundation에서 설정하는 부분에서 차이점을 찾아보고 확인해봐야겠다.</p><h3>🌎 Youtube Data API 활용</h3><hr><p>개발과 관련된 유용한 Youtube채널의 영상들의 시청여부를 저장하기 위해 Youtube Data API를 활용해서 재생목록을 텍스트파일로 정리해주는 파이썬스크립트를 작성했다.</p><p>🔗 <a href="https://developers.google.com/youtube/v3/docs/search/list?hl=ko">Youtube API Docs - search</a></p><pre><code class="language-python">import requests
+import time
+
+# Step 1: API 설정
+API_KEY = ''  # 실제 API 키 작성
+CHANNEL_ID = ''  # 제목을 가져올 채널 ID
+
+MAX_RESULTS = 50  # 한 번에 가져올 결과 수 (최대 50)
+
+# 유튜브 데이터 API v3 검색 엔드포인트 기본 URL
+youtube_url = 'https://www.googleapis.com/youtube/v3/search'
+
+# API 요청에 필요한 매개변수
+params = {
+    'part': 'snippet',
+    'maxResults': MAX_RESULTS,
+    'channelId': CHANNEL_ID,
+    'type': 'video',
+    'order': 'date',  # 결과를 날짜순으로 정렬
+    'key': API_KEY
+}
+
+# 비디오 제목과 URL을 가져오는 함수
+def fetch_video_titles_and_urls():
+    videosResult = []
+    next_page_token = None
+
+    while True:
+        if next_page_token:
+            params['pageToken'] = next_page_token
+
+        # Step 2: 유튜브 데이터 API에 GET 요청 보내기
+        response = requests.get(youtube_url, params=params)
+        data = response.json()
+
+        # Step 3: 비디오 제목 및 URL 추출
+        for item in data['items']:
+            title = item['snippet']['title']
+            video_id = item['id']['videoId']
+            video_url = f'https://www.youtube.com/watch?v={video_id}'
+            videosResult.append((title, video_url))
+
+        # 다음 페이지가 있는지 확인
+        next_page_token = data.get('nextPageToken')
+
+        # 다음 페이지가 있을 경우, 61초 대기
+        if next_page_token:
+            time.sleep(61)
+
+        if not next_page_token:
+            break
+
+    return videosResult
+
+# 제목과 URL을 텍스트 파일에 저장하는 함수
+def save_titles_and_urls_to_file(videos, filename='video_titles_and_urls.txt'):
+    with open(filename, 'w', encoding='utf-8') as file:
+        for index, (title, url) in enumerate(videos, start=1):
+            file.write(f"{index}. {title}\n- {url}\n\n")
+
+# 코드 실행
+videos = fetch_video_titles_and_urls()
+save_titles_and_urls_to_file(videos)
+
+</code></pre><ul><li>원하는 채널ID를 검색한 후 다음페이지가 있다면 페이지를 검색하여 동영상목록을 가져온 후 video<em>titles</em>and_urls.txt파일에 저장하는 스크립트</li></ul><h3>🙋🏻‍♂️ 기타 사항</h3><hr><ol><li>URLComponents에 queryItem에 추가하면 자동으로 UTF-8형식 URL인코딩을 자동으로 해주기 때문에 따로 처리하면 중복 인코딩이 될 수 있다.<ul></ul></li></ol><pre><code class="language-swift">        func requestSearch(keyword: String) async throws -&gt; Result&lt;SampleDTO, SampleError&gt; {
+    				...
+    				
+            /* 중복
+            guard let encodedKeyword = keyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+                return .failure(.invalidUrl)
+            }
+            */
+    
+            // query에 넣으면 자동으로 URL Encoding함
+            components?.queryItems = [
+                URLQueryItem(name: "searchKeyword", value: keyword)
+            ]
+            
+            ...
+    ```
+</code></pre></div><span>태그: </span><ul class="tag-list"><li><a href="/tags/ios">iOS</a></li><li><a href="/tags/swift">Swift</a></li><li><a href="/tags/swiftui">SwiftUI</a></li><li><a href="/tags/tca">TCA</a></li><li><a href="/tags/urlsession">URLSession</a></li><li><a href="/tags/vision">Vision</a></li><li><a href="/tags/ocr">OCR</a></li><li><a href="/tags/youtube">Youtube</a></li></ul></article></div><footer><p>Generated using <a href="https://github.com/johnsundell/publish">Publish</a></p><p><a href="mailto:scstnghks@gmail.com">Gmail</a> | <a href="https://www.linkedin.com/in/soohwan-kim-80250623a/">LinkedIn</a> | <a href="https://github.com/sookim-1">GitHub</a> | <a href="/feed.rss">RSS</a></p></footer></body></html>
