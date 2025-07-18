@@ -8,7 +8,7 @@
 
 가장 먼저 [ios-osushi.github.io](https://github.com/ios-osushi/ios-osushi.github.io) 저장소로 이동하여 어떻게 구현되었는 지에 대해서 파악했습니다.
 
-![./publish_deploy_capture.png]
+<img src="./publish_deploy_capture.png" alt="commit_capture" width="300" />
 커밋내역들을 살펴본 결과 대부분의 커밋메시지가 `deploy: ios-osushi/website` 로 website 라는 저장소에서 github.io 저장소로 배포한 것을 확인했습니다.
 
 [website](https://github.com/ios-osushi/website) 저장소로 이동하여 README.md 문서를 봤습니다. 
