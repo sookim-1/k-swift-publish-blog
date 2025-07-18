@@ -4,7 +4,7 @@ import Foundation
 let gmailAddress = "mailto:scstnghks@gmail.com"
 
 // https://www.linkedin.com/in/<your_linkedin>
-let linkedInAddress = "https://www.linkedin.com/in/soohwan-kim-80250623a/"
+let linkedInAddress = "https://www.linkedin.com/in/sookim1"
 
 // <your_github_name>
 let githubProfileName = "sookim-1"
