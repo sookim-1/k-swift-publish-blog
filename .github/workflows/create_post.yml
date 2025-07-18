@@ -1,0 +1,90 @@
+name: "Create post"
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_number:
+        description: '문서번호 <3자리：001>'
+        required: true
+        type: string
+      post_date:
+        description: '작성일자 <연월일 8자리：20240101>'
+        required: true
+        type: string
+      start_date:
+        description: '회고 시작일 <연월일 8자리：20240101>'
+        required: true
+        type: string
+      end_date:
+        description: '회고 종료일 <연월일 8자리：20240101>'
+        required: true
+        type: string
+        
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-post:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set name and email to Git
+      run: |
+        git config --local user.name sookim-1
+        git config --local user.email scstnghks@gmail.com
+
+    - name: Create and switch work branch
+      id: create_work_branch
+      run: |
+        WORK_BRANCH_NAME="feature/${{ github.event.inputs.post_number }}_${{ github.event.inputs.post_date }}"
+        git switch -c "$WORK_BRANCH_NAME"
+        echo "work_branch_name=$WORK_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+    - name: Create post
+      id: create_post
+      run: |
+        POST_FILENAME="${{ github.event.inputs.post_number }}-${{ github.event.inputs.post_date }}.md"
+        POST_FILE="./Content/posts/$POST_FILENAME"
+        POST_DATE_BEFORE=${{ github.event.inputs.post_date }}
+        POST_YEAR=${POST_DATE_BEFORE:0:4}
+        POST_MONTH=${POST_DATE_BEFORE:4:2}
+        POST_DAY=${POST_DATE_BEFORE:6:2}
+        POST_DATE=$POST_YEAR-$POST_MONTH-$POST_DAY
+        POST_TIME=$(date +"%H:%M")
+
+        START_DATE_BEFORE=${{ github.event.inputs.start_date }}
+        START_YEAR=${START_DATE_BEFORE:0:4}
+        START_MONTH=${START_DATE_BEFORE:4:2}
+        START_DAY=${START_DATE_BEFORE:6:2}
+        START_DATE=$START_YEAR.$START_MONTH.$START_DAY
+        
+        END_DATE_BEFORE=${{ github.event.inputs.end_date }}
+        END_YEAR=${END_DATE_BEFORE:0:4}
+        END_MONTH=${END_DATE_BEFORE:4:2}
+        END_DAY=${END_DATE_BEFORE:6:2}
+        END_DATE=$END_YEAR.$END_MONTH.$END_DAY
+        
+        touch $POST_FILE
+        echo -e "---\ndate: $POST_DATE $POST_TIME\ndescription: 요약\ntags: iOS, Swift\n---\n# 번호 : ${{ github.event.inputs.post_number }}, 작성일자: $POST_DATE\n## $START_DATE ~ $END_DATE\n### 제목\n내용작성" > $POST_FILE
+        git add $POST_FILE
+        git commit -m "Create $POST_FILENAME"
+        git push origin ${{ steps.create_work_branch.outputs.work_branch_name }}
+        echo "post_filename=$POST_FILENAME" >> $GITHUB_OUTPUT
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create pull request
+      run: |
+        gh --version
+        gh pr create \
+          --title "Create ${{ steps.create_post.outputs.post_filename }}" \
+          --body "## 주간일지 기록 (문서번호: ${{ github.event.inputs.post_number }}, 날짜: ${{ github.event.inputs.post_date }})" \
+          --base "${{ github.event.repository.default_branch }}" \
+          --head "${{ steps.create_work_branch.outputs.work_branch_name }}" \
+          --draft
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

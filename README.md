@@ -1,20 +1,51 @@
-# blog-website
-![create_post](https://github.com/sookim-1/blog-website/actions/workflows/create_post.yml/badge.svg)
-![build-and-deploy](https://github.com/sookim-1/blog-website/actions/workflows/build-and-deploy.yml/badge.svg)
+![create_post](https://github.com/sookim-1/k-swift-publish-blog/actions/workflows/create_post.yml/badge.svg)
+![build-and-deploy](https://github.com/sookim-1/k-swift-publish-blog/actions/workflows/build-and-deploy.yml/badge.svg)
 
-## 저장소 설명
-해당 저장소는 [ios-osushi's website](https://github.com/ios-osushi/website)를 참고하여 작성했습니다.
-Swift Developer가 Static Website를 편리하게 작성하도록 도와주는 [Publish](https://github.com/JohnSundell/Publish)라이브러리를 사용했습니다.
-개인용도로 매주 개발과 관련된 내용을 회고느낌으로 작성한 블로그배포 저장소입니다.
-👉 [sookim-1 주간회고록](https://sookimblogoriginversion.vercel.app/)
+- Launguage : [🇰🇷](./README_KR.md)
 
+![logo](./docs/logo.png)
 
-## 블로그 배포방법
-1. [Content/posts](./Content/posts) 폴더에 마크다운문서를 추가합니다.
-2. 추가한 후 main브랜치에 Merge되면 [build-and-deploy.yml](./.github/workflows/build-and-deploy.yml) 워크플로가 동작합니다.
-3. 워크플로가 통과되면 [sookim-1.github.io](https://github.com/sookim-1/sookim-1.github.io) 원격저장소에 배포됩니다.
+This repository was created with reference to [ios-osushi's website](https://github.com/ios-osushi/website).
+It uses the [Publish](https://github.com/JohnSundell/Publish) library, which helps you conveniently create static websites using the Swift language.
 
-## 문서 작성방법
-1. [create_post.yml](./.github/workflows/create_post.yml) 워크플로를 동작합니다.
-2. 문서번호, 작성일자, 회고 시작일, 회고 종료일을 입력받아서 문서를 작성하여 PR이 진행됩니다.
-3. 문서내용을 수정하여 PR을 Merge하면 위의 블로그 배포방법 순서로 배포됩니다.
+This repository is for a personal blog where I post weekly development retrospectives.
+
+> Example
+
+![sample_website_capture](./docs/sample_website_capture.png)
+
+-   Check out the live website 👉 [sookim-1's Weekly Retrospective](https://sookimblogoriginversion.vercel.app/)
+-   Read about the development process (in Korean) 👉 [Blog Development Journey](./docs/blog_development.md)
+
+## How to Customize
+
+You can use this repository to build your own personal T.W.L (Today We Learned) blog.
+
+1.  **Fork** this repository.
+2.  Add your Markdown files to the `Content/posts` folder.
+3.  Modify the variables in `Global.swift` to match your information.
+4.  Open the project in Xcode and build it for "My Mac". An `Output` folder will be generated. Add the contents of this folder to your `username.github.io` repository to complete the hosting.
+
+> Post Markdown Format Example
+
+```markdown
+---
+date: 2024-01-01 23:00
+description: Creating the blog
+tags: iOS, Swift
+---
+# Number: 001, Date: 2024-01-01
+```
+
+## How to Run Workflows
+
+### Automatic GitHub Pages Deployment Workflow
+
+1. Add a new Markdown file to the Content/posts folder.
+2. When the new commit is merged into the main branch, the build-and-deploy.yml workflow will be triggered.
+3. Once the workflow succeeds, the site will be deployed to your username.github.io remote repository.
+
+### Post Creation Workflow
+1. Run the create_post.yml workflow manually.
+2. You will be prompted to enter a post number, creation date, and the start/end dates for your retrospective. The workflow will then automatically create a new post file and open a Pull Request.
+3. Edit the content of the new post, then merge the Pull Request. The blog will be deployed following the automatic deployment steps mentioned above.
