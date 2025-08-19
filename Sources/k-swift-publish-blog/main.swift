@@ -23,7 +23,8 @@ struct BlogWebsite: Publish.Website {
 }
 
 // This will generate your website using the built-in Foundation theme:
-try BlogWebsite().publish(using: [
+try BlogWebsite().publish(
+    using: [
     .addMarkdownFiles(),
     .copyResources(),
     .generateHTML(withTheme: .blogWebsiteTheme),
