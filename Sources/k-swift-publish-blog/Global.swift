@@ -16,4 +16,4 @@ let githubAddress = "https://github.com/\(githubProfileName)"
 let githubPagesAddress = "https://\(githubProfileName).github.io"
 
 // <your_github_name>/<your_github_name>.github.io
-let githubDeployAddress = "\(githubProfileName)/\(githubProfileName).github.io"
+let githubDeployAddress = "\(githubProfileName)/\(githubProfileName).github.io/k-swift-publish-blog"

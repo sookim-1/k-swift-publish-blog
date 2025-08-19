@@ -29,5 +29,5 @@ try BlogWebsite().publish(using: [
     .generateHTML(withTheme: .blogWebsiteTheme),
     .generateRSSFeed(including: [.posts]),
     .generateSiteMap(),
-    .deploy(using: .gitHub(githubDeployAddress, useSSH: false))
+    .deploy(using: .gitHub(githubDeployAddress))
 ])
