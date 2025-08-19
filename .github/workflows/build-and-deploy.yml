@@ -27,9 +27,9 @@ jobs:
       run: make setup
     - name: Generate the website
       run: make generate
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: main
-        publish_dir: ./Output
+    # - name: Deploy to GitHub Pages
+      # uses: peaceiris/actions-gh-pages@v3
+      # with:
+        # github_token: ${{ secrets.GITHUB_TOKEN }}
+        # publish_branch: main
+        # publish_dir: ./Output
