@@ -20,9 +20,10 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     func makeIndexHTML(for index: Index, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: index, on: context.site),
+            .head(for: index, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body {
                 SiteHeader(context: context, selectedSelectionID: nil)
+
                 Wrapper {
                     H1(index.title)
                     Paragraph(context.site.description)
@@ -36,15 +37,17 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
                         site: context.site
                     )
                 }
+
                 SiteFooter()
             }
         )
     }
 
     func makeSectionHTML(for section: Section<Site>, context: PublishingContext<Site>) throws -> HTML {
+
         HTML(
             .lang(context.site.language),
-            .head(for: section, on: context.site),
+            .head(for: section, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body {
                 SiteHeader(context: context, selectedSelectionID: section.id)
                 Wrapper {
@@ -59,7 +62,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     func makeItemHTML(for item: Item<Site>, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: item, on: context.site),
+            .head(for: item, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body(
                 // .script(.async(), .src("https://platform.twitter.com/widgets.js")),
                 // .script(.async(), .src("https://b.st-hatena.com/js/bookmark_button.js")),
@@ -91,7 +94,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     func makePageHTML(for page: Page, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(for: page, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body {
                 SiteHeader(context: context, selectedSelectionID: nil)
                 Wrapper(page.body)
@@ -103,7 +106,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     func makeTagListHTML(for page: TagListPage, context: PublishingContext<Site>) throws -> HTML? {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(for: page, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body {
                 SiteHeader(context: context, selectedSelectionID: nil)
                 Wrapper {
@@ -124,7 +127,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     func makeTagDetailsHTML(for page: TagDetailsPage, context: PublishingContext<Site>) throws -> HTML? {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(for: page, on: context.site, stylesheetPaths: [Path.init(GITHUB_CSS_FILE_ADDRESS)]),
             .body {
                 SiteHeader(context: context, selectedSelectionID: nil)
                 Wrapper {
@@ -219,7 +222,7 @@ private struct SiteHeader<Site: Website>: Component {
     var body: Component {
         Header {
             Wrapper {
-                Link(context.site.name, url: "/")
+                Link(context.site.name, url: "/k-swift-publish-blog")
                     .class("site-name")
 
                 if Site.SectionID.allCases.count > 1 {
