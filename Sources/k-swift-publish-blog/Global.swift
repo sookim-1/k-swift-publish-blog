@@ -1,19 +1,19 @@
 import Foundation
 
 // mailto:<your_email>@gmail.com
-let gmailAddress = "mailto:scstnghks@gmail.com"
+let GMAIL_ADDRESS = "mailto:scstnghks@gmail.com"
 
 // https://www.linkedin.com/in/<your_linkedin>
-let linkedInAddress = "https://www.linkedin.com/in/sookim1"
+let LINKEDIN_ADDRESS = "https://www.linkedin.com/in/sookim1"
 
 // <your_github_name>
-let githubProfileName = "sookim-1"
+let GITHUB_PROFILE_NAME = "sookim-1"
 
 // https://github.com/<your_github_name>
-let githubAddress = "https://github.com/\(githubProfileName)"
+let GITHUB_ADDRESS = "https://github.com/\(GITHUB_PROFILE_NAME)"
 
 // https://<your_github_name>.github.io
-let githubPagesAddress = "https://\(githubProfileName).github.io"
+let GITHUB_PAGE_ADDRESS = "https://\(GITHUB_PROFILE_NAME).github.io/k-swift-publish-blog"
 
 // <your_github_name>/<your_github_name>.github.io
-let githubDeployAddress = "\(githubProfileName)/\(githubProfileName).github.io/k-swift-publish-blog"
+let GITHUB_DEPLOY_ADDRESS = "\(GITHUB_PROFILE_NAME)/\(GITHUB_PROFILE_NAME).github.io/k-swift-publish-blog"

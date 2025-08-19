@@ -154,7 +154,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     // Gmail Button
     private struct GmailButton: Component {
         var body: Component {
-            Link(url: gmailAddress) {
+            Link(url: GMAIL_ADDRESS) {
                 Image(
                     url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABDUlEQVR4AWP4////gOLB44D6nTcsGIo33QHi/zTGd0B2YTiAPpYjHIHNAf/piQk6wGPW8f/rLz8HYRCbXg5AWI4GQGJ0cwDY12gAJDbcHUA4CkZAIqQUK7Ts/m/SfxBMs5RupswBaACr+P47b/5zlG/5DyzZ/r/+8hNF7vuvP//nn3r0X6JhJ+0ccPrR+/+H7735jw9cf/n5v0D1Nuo5gBxQve06zR0AjoL7b7/+//zjN4bc+ScfaOeA33///k9Yfg4mDw7u/Xdeo6uhnQP6D93FMNxlxjF0ZbRzgMXEQ9iyI90cALIMJoccDXRzAK6CZog6YNQBow6gIx54Bwx4x2RAu2bAysoEZu9o7xgAQrvkxt3WZi0AAAAASUVORK5CYII=",
                     description: "지메일 주소"
@@ -171,7 +171,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     // LinkedIn Button
     private struct LinkedInButton: Component {
         var body: Component {
-            Link(url: linkedInAddress) {
+            Link(url: LINKEDIN_ADDRESS) {
                 Image(
                     url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABDUlEQVR4AWP4////gOLB44D6nTcsGIo33QHi/zTGd0B2YTiAPpYjHIHNAf/piQk6wGPW8f/rLz8HYRCbXg5AWI4GQGJ0cwDY12gAJDbcHUA4CkZAIqQUK7Ts/m/SfxBMs5RupswBaACr+P47b/5zlG/5DyzZ/r/+8hNF7vuvP//nn3r0X6JhJ+0ccPrR+/+H7735jw9cf/n5v0D1Nuo5gBxQve06zR0AjoL7b7/+//zjN4bc+ScfaOeA33///k9Yfg4mDw7u/Xdeo6uhnQP6D93FMNxlxjF0ZbRzgMXEQ9iyI90cALIMJoccDXRzAK6CZog6YNQBow6gIx54Bwx4x2RAu2bAysoEZu9o7xgAQrvkxt3WZi0AAAAASUVORK5CYII=",
                     description: "링크드인 주소"
@@ -188,7 +188,7 @@ private struct BlogWebsiteHTMLFactory<Site: Website>: HTMLFactory {
     // Github Button
     private struct GithubButton: Component {
         var body: Component {
-            Link(url: githubAddress) {
+            Link(url: GITHUB_ADDRESS) {
                 Image(
                     url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABDUlEQVR4AWP4////gOLB44D6nTcsGIo33QHi/zTGd0B2YTiAPpYjHIHNAf/piQk6wGPW8f/rLz8HYRCbXg5AWI4GQGJ0cwDY12gAJDbcHUA4CkZAIqQUK7Ts/m/SfxBMs5RupswBaACr+P47b/5zlG/5DyzZ/r/+8hNF7vuvP//nn3r0X6JhJ+0ccPrR+/+H7735jw9cf/n5v0D1Nuo5gBxQve06zR0AjoL7b7/+//zjN4bc+ScfaOeA33///k9Yfg4mDw7u/Xdeo6uhnQP6D93FMNxlxjF0ZbRzgMXEQ9iyI90cALIMJoccDXRzAK6CZog6YNQBow6gIx54Bwx4x2RAu2bAysoEZu9o7xgAQrvkxt3WZi0AAAAASUVORK5CYII=",
                     description: "깃허브 주소"
@@ -278,11 +278,11 @@ private struct SiteFooter: Component {
                 Link("Publish", url: "https://github.com/johnsundell/publish")
             }
             Paragraph {
-                Link("Gmail", url: gmailAddress)
+                Link("Gmail", url: GMAIL_ADDRESS)
                 Text(" | ")
-                Link("LinkedIn", url: linkedInAddress)
+                Link("LinkedIn", url: LINKEDIN_ADDRESS)
                 Text(" | ")
-                Link("GitHub", url: githubAddress)
+                Link("GitHub", url: GITHUB_ADDRESS)
                 Text(" | ")
                 Link("RSS", url: "/feed.rss")
             }

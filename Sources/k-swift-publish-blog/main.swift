@@ -14,8 +14,8 @@ struct BlogWebsite: Publish.Website {
     }
 
     // Update these properties to configure your website:
-    var url = URL(string: githubPagesAddress)!
-    var name = githubProfileName
+    var url = URL(string: GITHUB_PAGE_ADDRESS)!
+    var name = GITHUB_PROFILE_NAME
     var description = "Weekly Episodes"
     var language: Language { .korean }
     var imagePath: Path? { nil }
@@ -29,5 +29,5 @@ try BlogWebsite().publish(using: [
     .generateHTML(withTheme: .blogWebsiteTheme),
     .generateRSSFeed(including: [.posts]),
     .generateSiteMap(),
-    .deploy(using: .gitHub(githubDeployAddress))
+    .deploy(using: .gitHub(GITHUB_DEPLOY_ADDRESS))
 ])
